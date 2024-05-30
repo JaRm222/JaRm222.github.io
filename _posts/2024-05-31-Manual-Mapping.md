@@ -1,6 +1,6 @@
 ---
 title: "Manual Mapping Injection"
-date: 2024-05-31 00:30:00 +0100
+date: 2024-05-31 23:30:00 +0100
 categories: [writeups]
 tags: [c++, coding, Windows Internals, Injection, PE Internals]
 ---
