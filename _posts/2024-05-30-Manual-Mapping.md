@@ -9,7 +9,7 @@ tags: [c++, coding, Windows Internals, Injection, PE Internals]
 
 {:toc}
 
-# What is Manual Mapping? <a name="what-is-manual-mapping"></a>
+# What is Manual Mapping?
 Manual Mapping injection is one technique for injecting DLL's into processes. This was very popular in the video game cheating scene. You are essentially emulating what [LoadLibary](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-loadlibrarya) does at the bare minimum to get a DLL to run. This can be simplified into 5 steps:<br>
 1. Mapping the DLL Sections into Memory
 2. Handling Relocations
@@ -24,7 +24,7 @@ I found this a very confusing topic not long ago and would like to have a refere
 
 This will not provide the whole code but hopefully you will have a good enough understanding to write your own after this.
 
-# Setup <a name="setup"></a>
+# Setup
 First of all we need to open a handle to the process we want to inject into. To do this we must get the process id. We can use ```CreateToolhelp32Snapshot```, ```Process32First``` and ```Process32Next```. These will enumerate all the processes running including 64-bit processes. Below is the code to get a process id from the name of the process:
 ```c++
 UINT getProcId(const char* name) {
@@ -65,11 +65,11 @@ std::ifstream infile(dllPath, std::ios::binary);
 std::vector<BYTE> buffer((std::istreambuf_iterator<char>(infile)),std::istreambuf_iterator<char>());
 ```
 
-# PE File format <a name="PE-File-format"></a>
+# PE File format
 After watching the two videos I linked at the start of the blog you should have a good understanding of what the PE file format looks like and how it is represented in memory. One resource I always look at when I strugge to visualise the PE format is this [Wikipedia Image](https://en.wikipedia.org/wiki/Portable_Executable#/media/File:Portable_Executable_32_bit_Structure_in_SVG_fixed.svg). If you struggle to understand why I may be doing some weird calculation or dont quite understand what is happening referring to this image will help.
 
 
-# Mapping Sections to memory <a name="mapsections"></a>
+# Mapping Sections to memory
 You must map the sections of the DLL correctly in order for functions to be called correctly. If the sections are not loaded a their virtual addresses we will not be able to call functions or access data in the DLL. 
 
 ## What are sections?
@@ -208,7 +208,7 @@ We then apply this delta to the offset.
 
 We have now handled relocations! Onto handling PE imports.
 
-# Handling imports <a name="handling-imports"></a>
+# Handling imports
 Most PE files will need to import other files. For example you may have heard of Kernel32.dll. There is a import table which you may have heard of before which describes all imports.
 
 ![alt text]({{site.baseurl}}/assets/img/image-6.png)
@@ -253,7 +253,7 @@ if (!pThunk) { pThunk = pFunc; }
 		++pImportDescriptor;
 ```
 
-# Thread Local Storage Callbacks <a name="thread-local-storage-callbacks"></a>
+# Thread Local Storage Callbacks
 These callbacks are used to perform initialization and cleanup tasks for resources that are specific to individual threads. For example, if an application needs to allocate and initialize thread-specific data, it can do so in a TLS callback.
 
 Interestingly TLS callbacks are used in malware to execute code before the Main function so that they are not detected by the debugger. See [here](https://attack.mitre.org/techniques/T1055/005/).
@@ -273,7 +273,7 @@ if (ntHeader->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_TLS].Size)
 	}
 }
 ```
-# Call DLL MAIN! <a name="call-main"></a>
+# Call DLL MAIN! 
 Now you have handled everything to manually map a DLL into a process.
 
 To call DLL main it is located at the entry point inside the OptionalHeader.
@@ -316,7 +316,7 @@ void __stdcall ManualMap(MANUALMAPDATA* mp)
 }
 ```
 
-## Resources <a name="resources"></a>
+## Resources 
 [0xRick - Windows Internals Blogs](https://0xrick.github.io/)<br>
 [Guided Hacking - Manual Mapper Youtube Series](https://www.youtube.com/watch?v=qzZTXcBu3cE)<br>
 [Code Reversing Manual Mapping](https://www.codereversing.com/archives/652)<br>
