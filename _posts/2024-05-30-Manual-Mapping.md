@@ -7,14 +7,7 @@ tags: [c++, coding, Windows Internals, Injection, PE Internals]
 
 # Contents
 
-- [What Is Manual Mapping?](#what-is-manual-mapping?)
-- [Setup](#setup)
-- [PE File Format](#pe-file-format)
-- [Mapping Sections](#mapSections)
-- [Handling Imports](#handling-imports)
-- [Executing TLS Callbacks](#thread-local-storage-callbacks)
-- [Call DLL Main](#call-main)
-- [Resources](#resources)
+{:toc}
 
 # What is Manual Mapping? <a name="what-is-manual-mapping"></a>
 Manual Mapping injection is one technique for injecting DLL's into processes. This was very popular in the video game cheating scene. You are essentially emulating what [LoadLibary](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-loadlibrarya) does at the bare minimum to get a DLL to run. This can be simplified into 5 steps:<br>
