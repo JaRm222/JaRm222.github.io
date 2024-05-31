@@ -7,16 +7,16 @@ tags: [c++, coding, Windows Internals, Injection, PE Internals]
 
 # Contents
 
-- [What Is Manual Mapping?](#What-is-Manual-Mapping?)
-- [Setup](#Setup)
-- [PE File Format](#PE-File-format)
-- [Mapping Sections](#Mapping-Sections-to-memory)
-- [Handling Imports](#Handling-imports)
-- [Executing TLS Callbacks](#Thread-Local-Storage-Callbacks)
-- [Call DLL Main](#Call-DLL-MAIN!)
-- [Resources](#Resources)
+- [What Is Manual Mapping?](#what-is-manual-mapping?)
+- [Setup](#setup)
+- [PE File Format](#pe-file-format)
+- [Mapping Sections](#mapSections)
+- [Handling Imports](#handling-imports)
+- [Executing TLS Callbacks](#thread-local-storage-callbacks)
+- [Call DLL Main](#call-main)
+- [Resources](#resources)
 
-# What is Manual Mapping?
+# What is Manual Mapping? <a name="what-is-manual-mapping"></a>
 Manual Mapping injection is one technique for injecting DLL's into processes. This was very popular in the video game cheating scene. You are essentially emulating what [LoadLibary](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-loadlibrarya) does at the bare minimum to get a DLL to run. This can be simplified into 5 steps:<br>
 1. Mapping the DLL Sections into Memory
 2. Handling Relocations
@@ -31,7 +31,7 @@ I found this a very confusing topic not long ago and would like to have a refere
 
 This will not provide the whole code but hopefully you will have a good enough understanding to write your own after this.
 
-# Setup
+# Setup <a name="setup"></a>
 First of all we need to open a handle to the process we want to inject into. To do this we must get the process id. We can use ```CreateToolhelp32Snapshot```, ```Process32First``` and ```Process32Next```. These will enumerate all the processes running including 64-bit processes. Below is the code to get a process id from the name of the process:
 ```c++
 UINT getProcId(const char* name) {
@@ -72,11 +72,11 @@ std::ifstream infile(dllPath, std::ios::binary);
 std::vector<BYTE> buffer((std::istreambuf_iterator<char>(infile)),std::istreambuf_iterator<char>());
 ```
 
-# PE File format
+# PE File format <a name="PE-File-format"></a>
 After watching the two videos I linked at the start of the blog you should have a good understanding of what the PE file format looks like and how it is represented in memory. One resource I always look at when I strugge to visualise the PE format is this [Wikipedia Image](https://en.wikipedia.org/wiki/Portable_Executable#/media/File:Portable_Executable_32_bit_Structure_in_SVG_fixed.svg). If you struggle to understand why I may be doing some weird calculation or dont quite understand what is happening referring to this image will help.
 
 
-# Mapping Sections to memory
+# Mapping Sections to memory <a name="mapsections"></a>
 You must map the sections of the DLL correctly in order for functions to be called correctly. If the sections are not loaded a their virtual addresses we will not be able to call functions or access data in the DLL. 
 
 ## What are sections?
@@ -215,7 +215,7 @@ We then apply this delta to the offset.
 
 We have now handled relocations! Onto handling PE imports.
 
-# Handling imports
+# Handling imports <a name="handling-imports"></a>
 Most PE files will need to import other files. For example you may have heard of Kernel32.dll. There is a import table which you may have heard of before which describes all imports.
 
 ![alt text]({{site.baseurl}}/assets/img/image-6.png)
@@ -260,7 +260,7 @@ if (!pThunk) { pThunk = pFunc; }
 		++pImportDescriptor;
 ```
 
-# Thread Local Storage Callbacks
+# Thread Local Storage Callbacks <a name="thread-local-storage-callbacks"></a>
 These callbacks are used to perform initialization and cleanup tasks for resources that are specific to individual threads. For example, if an application needs to allocate and initialize thread-specific data, it can do so in a TLS callback.
 
 Interestingly TLS callbacks are used in malware to execute code before the Main function so that they are not detected by the debugger. See [here](https://attack.mitre.org/techniques/T1055/005/).
@@ -280,7 +280,7 @@ if (ntHeader->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_TLS].Size)
 	}
 }
 ```
-# Call DLL MAIN!
+# Call DLL MAIN! <a name="call-main"></a>
 Now you have handled everything to manually map a DLL into a process.
 
 To call DLL main it is located at the entry point inside the OptionalHeader.
@@ -323,7 +323,7 @@ void __stdcall ManualMap(MANUALMAPDATA* mp)
 }
 ```
 
-## Resources
+## Resources <a name="resources"></a>
 [0xRick - Windows Internals Blogs](https://0xrick.github.io/)<br>
 [Guided Hacking - Manual Mapper Youtube Series](https://www.youtube.com/watch?v=qzZTXcBu3cE)<br>
 [Code Reversing Manual Mapping](https://www.codereversing.com/archives/652)<br>
