@@ -70,7 +70,7 @@ You must map the sections of the DLL correctly in order for functions to be call
 
 ## What are sections?
 Below shows an example of sections in a DLL. The ```.text``` section would hold code and the ```.rsrc``` section would hold resources that a PE file* uses. For example, this could be an image.
-![image 1]({{site.baseurl}}/assets/img/image-1.png)
+![image 1]({{site.baseurl}}/assets/manualmapping/image-1.png)
 
 I like to think of sections as ordered information in the binary. It basically tells us where we can find certain values and data.
 
@@ -82,11 +82,11 @@ What do we need?
 2. The size of how large our DLL file is.
 3. The DLL bytes that we have loaded into our buffer
 
-![alt text]({{site.baseurl}}/assets/img/image-2.png)<br>
+![alt text]({{site.baseurl}}/assets/manualmapping/image-2.png)<br>
 Here we can see that the size of the image is located inside the optional header.
 
 Well how can we get the optional header?<br>
-![alt text]({{site.baseurl}}/assets/img/image-3.png)
+![alt text]({{site.baseurl}}/assets/manualmapping/image-3.png)
 
 Lucky for use the e_lfanew value holds an offset to the NT Headers which holds the optional header. Therefore all we need to do is add this value to the base address of our data.
 
@@ -105,7 +105,7 @@ LPVOID pSrc = VirtualAllocEx(hProc, NULL, pNtHeader->OptionalHeader.SizeOfImage,
 Now that we have the allocated memory we can start mapping our sections. We will need to iterate all the sections and write their raw data. The sections header will tell us all we need to know about a section.
 
 The section header of each section is located in a contigous block of memory, meaning they are right next to each other. As ```.text``` in our earlier example was the 1st section the section header it would appear first and then ```.rdata``` section header would appear second. We can see this in PE-Bear.<br>
-![alt text]({{site.baseurl}}/assets/img/image-4.png)
+![alt text]({{site.baseurl}}/assets/manualmapping/image-4.png)
 
 Clicking on the size we can see that .rdata section header appears right after .text.
 
@@ -170,7 +170,7 @@ typedef struct {
 ```
 
 Now we want to know how many relocations we want to perform in each block. <br>
-![alt text]({{site.baseurl}}/assets/img/image-5.png)
+![alt text]({{site.baseurl}}/assets/manualmapping/image-5.png)
 
 The above image shows a relocation table alongside a relocation block. 
 
@@ -207,7 +207,7 @@ We have now handled relocations! Onto handling PE imports.
 # Handling imports
 Most PE files will need to import other files. For example you may have heard of Kernel32.dll. There is a import table which you may have heard of before which describes all imports.
 
-![alt text]({{site.baseurl}}/assets/img/image-6.png)
+![alt text]({{site.baseurl}}/assets/manualmapping/image-6.png)
 <br>
 Essentially there are 3 things we want to do:
 1. Load the import using loadlibary
