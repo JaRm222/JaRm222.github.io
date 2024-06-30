@@ -2,7 +2,7 @@
 title: "Dumping Stealers from it's AutoIT loader"
 date: 2024-06-30 01:00:00 +0200
 categories: [Malware-Analysis]
-tags: [Malware-Analysis, Analysis, Reversing]
+tags: [malware-analysis, Analysis, Reversing]
 ---
 
 
