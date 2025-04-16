@@ -10,7 +10,7 @@ JaRm
 ```
 
 ## About Me
-👋 I am currently a second year Computer Science student with a particular interest in cyber security. I like to reverse engineer and break things. This blog will be focussed around any findings I want to share my knowledge on. Such as hackthebox or tryhackme writeups as well as anything else related to cyber.
+👋 I am currently a final year computer science student with a particular interest in cybersecurity. I like to reverse engineer and break things. This blog will be focussed around any findings I want to share my knowledge on. Such as HackTheBox or TryHackMe writeups as well as anything else related to cyber.
 
 
 [HackTheBox](https://www.hackthebox.com/home/users/profile/397057)
